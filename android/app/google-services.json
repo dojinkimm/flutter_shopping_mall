@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "784430426970",
+    "firebase_url": "https://shopping-mall-d0a55.firebaseio.com",
+    "project_id": "shopping-mall-d0a55",
+    "storage_bucket": "shopping-mall-d0a55.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:784430426970:android:732951f460a62b70",
+        "android_client_info": {
+          "package_name": "com.example.shoppingmall"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "784430426970-k38gg3o51ieqn10er5ef63u5n5ulsj67.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shoppingmall",
+            "certificate_hash": "dd733e6b9d3193ee8ae7a4dafba132fdec67a907"
+          }
+        },
+        {
+          "client_id": "784430426970-s917e4bd580u69jkftdprm159cpuhvl6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIMThxQ_iqAzdc-4HoHKFhS0PqTUjjtSk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "784430426970-s917e4bd580u69jkftdprm159cpuhvl6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "784430426970-95641msrakfvn53mihgepjsvrt0dbfh2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shoppingMall"
+              }
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
