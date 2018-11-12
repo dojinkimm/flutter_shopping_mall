@@ -1,4 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:async';
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+final auth = FirebaseAuth.instance;
+final googleSignIn = new GoogleSignIn();
 
 class AddItem extends StatefulWidget {
   @override
@@ -8,19 +19,25 @@ class AddItem extends StatefulWidget {
 class _AddItemState extends State<AddItem> {
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _priceController = new TextEditingController();
-  TextEditingController _descriptionController = new TextEditingController();
 
   String _name = "";
   String _price = "";
+  String _imageURL;
 
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _imageURL =
+        "https://firebasestorage.googleapis.com/v0/b/shopping-mall-d0a55.appspot.com/o/default.png?alt=media&token=1da459a0-dfe7-46da-a0ce-727cb63a5a0c";
+  }
 
   @override
   void dispose() {
     super.dispose();
     _nameController.dispose();
     _priceController.dispose();
-    _descriptionController.dispose();
   }
 
   @override
@@ -43,15 +60,17 @@ class _AddItemState extends State<AddItem> {
         ),
         body: ListView(
           children: <Widget>[
-            Image.asset(
-              "images/default.png",
+            Image.network(
+              _imageURL,
               fit: BoxFit.fitWidth,
             ),
             Container(
                 padding: EdgeInsets.all(15.0),
                 alignment: Alignment.centerRight,
-                child: Icon(Icons.camera_alt)),
-//////////////////////////////////
+                child: IconButton(
+                  icon: Icon(Icons.camera_alt),
+                  onPressed: () => uploadImage(),
+                )),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Form(
@@ -72,7 +91,7 @@ class _AddItemState extends State<AddItem> {
                     ListTile(
                       title: TextFormField(
                         validator: (val) =>
-                            val.isEmpty ? 'Please write price' : null,
+                            val.isEmpty? 'Please write price' : null,
                         decoration: InputDecoration(
                           labelText: 'Price',
                         ),
@@ -87,35 +106,45 @@ class _AddItemState extends State<AddItem> {
         ));
   }
 
+  Future uploadImage() async {
+    final File imageFile = await ImagePicker.pickImage(
+        source: ImageSource.gallery, maxHeight: 300.0, maxWidth: 300.0);
+    int timestamp = new DateTime.now().millisecondsSinceEpoch;
+    StorageReference storageRef = FirebaseStorage.instance
+        .ref()
+        .child("img_" + timestamp.toString() + ".jpg");
+    StorageUploadTask uploadTask = storageRef.putFile(imageFile);
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    setState(() {
+      _imageURL = downloadUrl;
+    });
+  }
+
   void _submit() {
     final form = formKey.currentState;
 
     if (form.validate() && _name != null && _price != null) {
       form.save();
-      // _completeForm();
+      _completeForm();
     }
   }
 
-  // Future _completeForm() async {
-  //   FirebaseAuth.instance.currentUser().then((user){
-  //     Firestore.instance.collection('users').document(user.uid).setData({
-  //       'nickName' : nickName,
-  //       'phoneNumber' : phoneNumber,
-  //       'age' : _age,
-  //       'location' : location,
-  //       'foods' : chooseFood,
-  //       'field' : chooseField,
-  //       'tags' : tags,
-  //       'displayName' : user.displayName,
-  //       'uid' : user.uid,
-  //       'photoURL' : user.photoUrl,
-  //       'email' : user.email,
-  //       'job' : jobController.text,
-  //       'lastLoginDate': new DateTime.now()
-  //     }).whenComplete((){
-  //       MyNavigator.goToHomePage(context, user.uid);
-  //     }).catchError((e) => print(e));
-  //   });
-  //   //여기에서 저장된 데이터들을 DB로 올림
-  // }
+  Future _completeForm() async {
+    FirebaseAuth.instance.currentUser().then((user) async {
+      Firestore.instance.collection('product').add({
+        'imageURL' : _imageURL,
+        'name' : _name,
+        'price' : int.parse(_price),
+        'creator' : user.uid,
+        'created': new DateTime.now(),
+        'modified': new DateTime.now()
+      }).whenComplete((){
+        print("DB에 저장 완료");
+         Navigator.pop(context);
+      }).catchError((e) => print(e));
+    });
+    //여기에서 저장된 데이터들을 DB로 올림
+  }
+
 }
