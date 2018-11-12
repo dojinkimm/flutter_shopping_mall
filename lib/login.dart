@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'package:shopping_mall/home.dart';
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -17,7 +19,6 @@ class _LoginState extends State<Login> {
   String _userName = "";
   String _imageURL = "";
   String _email = "";
-  String _uid = "";
 
   
   Future _signAnonymously() async {
@@ -43,10 +44,10 @@ class _LoginState extends State<Login> {
       if (docSnap.data == null) {
         _newUserSaveDB();
       } else {
-        Navigator.pop(context, user.uid);
         Firestore.instance.document('users/${user.uid}').updateData({
           'lastLoginDate': new DateTime.now(),
         });
+        Navigator.pop(context, user.uid); 
       }
     }).catchError((error) {
       print(error);
@@ -77,10 +78,10 @@ class _LoginState extends State<Login> {
       if (docSnap.data == null) {
         _newUserSaveDB();
       } else {
-        Navigator.pop(context, user.uid);
         Firestore.instance.document('users/${user.uid}').updateData({
           'lastLoginDate': new DateTime.now(),
         });
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(uid: user.uid,))); 
       }
     }).catchError((error) {
       print(error);
@@ -104,8 +105,8 @@ class _LoginState extends State<Login> {
         'photoURL': _imageURL,
         'email': _email,
         'lastLoginDate': new DateTime.now()
-      }).whenComplete(() {
-        Navigator.pop(context, user.uid);
+      }).then((d) {
+         Navigator.push(context, MaterialPageRoute(builder: (context)=> Home(uid: user.uid,))); 
       }).catchError((e) => print(e));
     });
     //여기에서 저장된 데이터들을 DB로 올림
