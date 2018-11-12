@@ -14,13 +14,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final TextEditingController _controller = new TextEditingController();
-  Firestore fs = Firestore.instance;
 
-  @override
-void initState() {
-    super.initState();
-    print("여기에 들어왔어 ${widget.uid}");
-}
   String finalSearch = "";
   double price = 200.0;
 
@@ -199,10 +193,11 @@ void initState() {
                   );
                 } else {
                   List<DocumentSnapshot> docSnap = snapshot.data.documents;
-                  List<DocumentSnapshot> listSnap = new List<DocumentSnapshot>();
+                  List<DocumentSnapshot> listSnap =
+                      new List<DocumentSnapshot>();
 
-                  docSnap.forEach((d){
-                    if(d['name'].toLowerCase()==finalSearch){
+                  docSnap.forEach((d) {
+                    if (d['name'].toLowerCase() == finalSearch) {
                       listSnap.add(d);
                     }
                   });
@@ -216,7 +211,6 @@ void initState() {
                       Expanded(child: _buildList(listSnap)),
                     ],
                   );
-
                 }
               } else
                 return Center(child: CircularProgressIndicator());
