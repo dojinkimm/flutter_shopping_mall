@@ -36,6 +36,8 @@ class _LoginState extends State<Login> {
       assert(user.providerData[0].photoUrl == null);
       assert(user.providerData[0].email == null);
     }
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
 
     Firestore.instance.document('users/${user.uid}').get().then((docSnap) {
       if (docSnap.data == null) {
@@ -64,8 +66,12 @@ class _LoginState extends State<Login> {
     assert(user.displayName != null);
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
+
+    final FirebaseUser currentUser = await _auth.currentUser();
+    assert(user.uid == currentUser.uid);
     print("signed in " + user.displayName);
-    print(user.uid);
+
+    
 
     Firestore.instance.document('users/${user.uid}').get().then((docSnap) {
       if (docSnap.data == null) {

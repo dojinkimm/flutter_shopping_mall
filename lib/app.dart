@@ -10,7 +10,6 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(primaryColor: Colors.grey[300]),
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
-      onGenerateRoute: _getRoute,
       routes: <String, WidgetBuilder>{
         '/login': (BuildContext context) => new Login()
       },
@@ -18,15 +17,4 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Route<dynamic> _getRoute(RouteSettings settings) {
-    if (settings.name != '/login') {
-      return null;
-    }
-
-    return MaterialPageRoute<void>(
-      settings: settings,
-      builder: (BuildContext context) => Login(),
-      fullscreenDialog: true,
-    );
-  }
 }

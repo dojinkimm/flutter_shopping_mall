@@ -17,6 +17,11 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  @override
+    void initState() {
+      super.initState();
+      print(widget.uid);
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +54,8 @@ class _ProfileState extends State<Profile> {
               else {
                 
                 final DocumentSnapshot document = snapshot.data.documents[0];
-                  print(document['name']);
                 print(widget.uid);
-                print(document['uid']);
-                if(document['name']!=null){
+                if(document['displayName']!=null){
                 
                 return ListView(
                   children: <Widget>[

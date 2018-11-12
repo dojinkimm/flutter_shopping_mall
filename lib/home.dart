@@ -19,10 +19,10 @@ class _HomeState extends State<Home> {
   @override
 void initState() {
     super.initState();
-    print(widget.uid);
+    print("여기에 들어왔어 ${widget.uid}");
 }
   String finalSearch = "";
-  double price = 150.0;
+  double price = 200.0;
 
   Widget _buildAppBar() {
     return AppBar(
@@ -77,7 +77,7 @@ void initState() {
                           activeColor: Colors.grey,
                           value: price,
                           min: 0.0,
-                          max: 500.0,
+                          max: 200.0,
                           onChanged: (value) {
                             setState(() {
                               price = value;
