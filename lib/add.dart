@@ -45,9 +45,13 @@ class _AddItemState extends State<AddItem> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          leading: FlatButton(
+          leading: Container(
+            padding: EdgeInsets.only(left: 10.0),
+            alignment: Alignment.center,
+            child: InkWell(
             child: Text("Cancel"),
-            onPressed: () => Navigator.pop(context),
+            onTap: () => Navigator.pop(context),
+          ),
           ),
           title: Text("Add"),
           centerTitle: true,
@@ -91,7 +95,7 @@ class _AddItemState extends State<AddItem> {
                     ListTile(
                       title: TextFormField(
                         validator: (val) =>
-                            val.isEmpty? 'Please write price' : null,
+                            val.isEmpty ? 'Please write price' : null,
                         decoration: InputDecoration(
                           labelText: 'Price',
                         ),
@@ -133,18 +137,17 @@ class _AddItemState extends State<AddItem> {
   Future _completeForm() async {
     FirebaseAuth.instance.currentUser().then((user) async {
       Firestore.instance.collection('product').add({
-        'imageURL' : _imageURL,
-        'name' : _name,
-        'price' : int.parse(_price),
-        'creator' : user.uid,
+        'imageURL': _imageURL,
+        'name': _name,
+        'price': int.parse(_price),
+        'creator': user.uid,
         'created': new DateTime.now(),
         'modified': new DateTime.now()
-      }).whenComplete((){
+      }).whenComplete(() {
         print("DB에 저장 완료");
-         Navigator.pop(context);
+        Navigator.pop(context);
       }).catchError((e) => print(e));
     });
     //여기에서 저장된 데이터들을 DB로 올림
   }
-
 }
