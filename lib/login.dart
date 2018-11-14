@@ -22,6 +22,7 @@ class _LoginState extends State<Login> {
 
   
   Future _signAnonymously() async {
+   
     final FirebaseUser user = await _auth.signInAnonymously();
     assert(user != null);
     assert(user.isAnonymous);
@@ -57,6 +58,7 @@ class _LoginState extends State<Login> {
 
   Future _signGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     final FirebaseUser user = await _auth.signInWithGoogle(
@@ -67,6 +69,7 @@ class _LoginState extends State<Login> {
     assert(user.displayName != null);
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
+     
 
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
@@ -125,7 +128,7 @@ class _LoginState extends State<Login> {
                 Text('Shopping Mall'),
                 SizedBox(height: 120.0),
                 RaisedButton(
-                  onPressed: () => _signGoogle(),
+                  onPressed: ()=> _signGoogle(),
                   child: Text("Google"),
                 ),
                 SizedBox(height: 10.0),
