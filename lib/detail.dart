@@ -21,6 +21,7 @@ class _DetailPageState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
+    print(widget.pid);
     doOrNot = false;
     creator = "";
   }
@@ -38,21 +39,23 @@ class _DetailPageState extends State<DetailPage> {
               ),
               FlatButton(
                 child: Text("YES"),
-                onPressed: () {
+                onPressed: () async {
                   if (editOrDelete == "edit") {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => EditPage(pid: widget.pid)));
                   } else if (editOrDelete == "delete") {
-                    print("deleting");
+                   
+                   print(Firestore.instance.collection('product').document(widget.pid));
                     Firestore.instance
                         .collection('product')
                         .document(widget.pid)
-                        .delete().then((val){
+                        .delete().whenComplete((){          
                           Navigator.pop(context);
                           Navigator.pop(context);
-                        });
+                          print("deleting");
+                        }).catchError((e)=>print(e));
                   }
                 },
               ),

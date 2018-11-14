@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:uuid/uuid.dart';
 
 final auth = FirebaseAuth.instance;
 final googleSignIn = new GoogleSignIn();
@@ -111,12 +112,12 @@ class _AddItemState extends State<AddItem> {
   }
 
   Future uploadImage() async {
+    String uuid = Uuid().v1();
     final File imageFile = await ImagePicker.pickImage(
         source: ImageSource.gallery, maxHeight: 300.0, maxWidth: 300.0);
-    int timestamp = new DateTime.now().millisecondsSinceEpoch;
     StorageReference storageRef = FirebaseStorage.instance
         .ref()
-        .child("img_" + timestamp.toString() + ".jpg");
+        .child("img_$uuid.jpg");
     StorageUploadTask uploadTask = storageRef.putFile(imageFile);
     StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
@@ -135,8 +136,10 @@ class _AddItemState extends State<AddItem> {
   }
 
   Future _completeForm() async {
+    String uuid = Uuid().v1();
     FirebaseAuth.instance.currentUser().then((user) async {
-      Firestore.instance.collection('product').add({
+      Firestore.instance.collection('product').document(uuid).setData({
+        'id': uuid,
         'imageURL': _imageURL,
         'name': _name,
         'price': int.parse(_price),
