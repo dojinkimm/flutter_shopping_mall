@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:uuid/uuid.dart';
 
 class EditPage extends StatefulWidget {
   final pid;
@@ -62,13 +63,13 @@ class _EditPageState extends State<EditPage> {
           )
         ],
       ),
-      body: FutureBuilder(
-          future: Firestore.instance
+      body: StreamBuilder(
+          stream: Firestore.instance
               .collection('product')
               .where('id', isEqualTo: widget.pid)
               .limit(1)
-              .getDocuments(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
+              .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData)
               return Center(child: CircularProgressIndicator());
             else {
@@ -135,18 +136,20 @@ class _EditPageState extends State<EditPage> {
   }
 
   Future uploadImage() async {
+    String uuid = Uuid().v1();
     final File imageFile = await ImagePicker.pickImage(
         source: ImageSource.gallery, maxHeight: 300.0, maxWidth: 300.0);
-    int timestamp = new DateTime.now().millisecondsSinceEpoch;
     StorageReference storageRef = FirebaseStorage.instance
         .ref()
-        .child("img_" + timestamp.toString() + ".jpg");
+        .child("img_$uuid.jpg");
     StorageUploadTask uploadTask = storageRef.putFile(imageFile);
     StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
     String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
     setState(() {
       _imageURL = downloadUrl;
     });
+     Firestore.instance.collection('product').document(widget.pid).updateData({
+        'imageURL': _imageURL});
   }
 
   void _submit() {
